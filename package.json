@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/dougrosa0/trends-api#readme",
   "dependencies": {
-    "aws-sdk": "^2.1692.0",
+    "@aws-sdk/client-dynamodb": "^3.699.0",
+    "@aws-sdk/client-ses": "^3.699.0",
+    "@aws-sdk/lib-dynamodb": "^3.699.0",
     "cors": "^2.8.5",
     "express": "^4.21.1",
     "google-trends-api": "^4.9.2"
