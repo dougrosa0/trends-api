@@ -1,4 +1,5 @@
 const AWS_REGION = 'us-west-2';
+const TABLE_NAME = 'googleTrends';
 
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { DynamoDBDocumentClient, QueryCommand, PutCommand } = require("@aws-sdk/lib-dynamodb");
@@ -15,7 +16,7 @@ exports.emailTrends = async function(req) {
   console.log("Emailing trends for " + searchDate);
 
   var params = {
-      TableName : "googleTrends",
+      TableName : TABLE_NAME,
       KeyConditionExpression: "#sd = :searchDate",
       ExpressionAttributeNames:{
           "#sd": "searchDate"
@@ -79,7 +80,7 @@ exports.readTrends = async function(req) {
   var searchDate = req.params.date;
 
   const params = {
-    TableName: "googleTrends",
+    TableName: TABLE_NAME,
     KeyConditionExpression: "#sd = :searchDate",
     ExpressionAttributeNames: {
       "#sd": "searchDate"
@@ -147,7 +148,7 @@ async function saveItem(queryString, searchDate, trafficAmount, dayRank) {
       "dayRank": dayRank,
       "queryLink": queryLink
     },
-    TableName: "googleTrends"
+    TableName: TABLE_NAME
   };
   return docClient.send(new PutCommand(params));
 }
