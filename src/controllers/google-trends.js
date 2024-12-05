@@ -6,9 +6,9 @@ const { DynamoDBDocumentClient, QueryCommand, PutCommand } = require("@aws-sdk/l
 const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
 const googleTrends = require('google-trends-api');
 
-const client = new DynamoDBClient({ region: AWS_REGION, credentials: { accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY } });
+const client = new DynamoDBClient({ region: AWS_REGION, credentials: { accessKeyId: process.env.aws_access_key_id, secretAccessKey: process.env.aws_secret_access_key } });
 const docClient = DynamoDBDocumentClient.from(client);
-const sesClient = new SESClient({ region: AWS_REGION, credentials: { accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY } });
+const sesClient = new SESClient({ region: AWS_REGION, credentials: { accessKeyId: process.env.aws_access_key_id, secretAccessKey: process.env.aws_secret_access_key } });
 
 exports.emailTrends = async function(req) {
   var searchDate = req.body.date;
