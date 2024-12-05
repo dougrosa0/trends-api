@@ -4,7 +4,7 @@
   "description": "HTTP API for trend CRUD",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+	"start": "node ./src/api-server.js"
   },
   "repository": {
     "type": "git",
