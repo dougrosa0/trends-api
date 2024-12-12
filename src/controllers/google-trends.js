@@ -1,14 +1,16 @@
 const AWS_REGION = 'us-west-2';
 const TABLE_NAME = 'googleTrends';
+const dotenv = require('dotenv');
+dotenv.config({ path: '../.env' });
 
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const { DynamoDBDocumentClient, QueryCommand, PutCommand } = require("@aws-sdk/lib-dynamodb");
 const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
 const googleTrends = require('google-trends-api');
 
-const client = new DynamoDBClient({ region: AWS_REGION, credentials: { accessKeyId: process.env.aws_access_key_id, secretAccessKey: process.env.aws_secret_access_key } });
+const client = new DynamoDBClient({ region: AWS_REGION, credentials: { accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY } });
 const docClient = DynamoDBDocumentClient.from(client);
-const sesClient = new SESClient({ region: AWS_REGION, credentials: { accessKeyId: process.env.aws_access_key_id, secretAccessKey: process.env.aws_secret_access_key } });
+const sesClient = new SESClient({ region: AWS_REGION, credentials: { accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY } });
 
 exports.emailTrends = async function(req) {
   var searchDate = req.body.date;

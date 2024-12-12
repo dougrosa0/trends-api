@@ -4,7 +4,7 @@
   "description": "HTTP API for trend CRUD",
   "main": "app.js",
   "scripts": {
-	"start": "node ./src/api-server.js"
+    "start": "node ./src/api-server.js"
   },
   "repository": {
     "type": "git",
@@ -21,6 +21,7 @@
     "@aws-sdk/client-ses": "^3.699.0",
     "@aws-sdk/lib-dynamodb": "^3.699.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.1",
     "google-trends-api": "^4.9.2"
   }
