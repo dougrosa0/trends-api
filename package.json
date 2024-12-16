@@ -2,7 +2,7 @@
   "name": "trends-api",
   "version": "1.0.0",
   "description": "HTTP API for trend CRUD",
-  "main": "app.js",
+  "main": "api-server.js",
   "scripts": {
     "start": "node ./src/api-server.js"
   },
