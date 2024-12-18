@@ -1,6 +1,8 @@
 # trends-api
  API for CRUD trend operations
 
+ Node js server using express, serving trending data
+
 ## Prerequisites
 
 - Node.js (v12 or higher)
@@ -25,7 +27,6 @@ npm start
 ## Deployment
 
 1. Deploy to heroku:
-heroku create trends-api
 git push heroku main
 
 2. Set AWS credentials in heroku config vars

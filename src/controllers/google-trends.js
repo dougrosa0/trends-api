@@ -106,9 +106,18 @@ exports.readTrends = async function(req) {
   };
 };
 
-exports.writeTrends = async function() {
+exports.writeTrends = async function(req) {
+  const reqDate = req.params.date;
+  console.log(reqDate);
+
   try {
-    const results = await googleTrends.dailyTrends({ geo: 'US' });
+    const results = await googleTrends.dailyTrends(
+      { 
+        trendDate: new Date (reqDate),
+        geo: 'US'
+      }
+    );
+    console.log(results);
     const dailyGoogleTrends = JSON.parse(results);
     const days = dailyGoogleTrends.default.trendingSearchesDays;
 

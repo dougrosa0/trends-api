@@ -9,8 +9,8 @@ router.get('/:date', async function (req, res) {
     res.send(await googleTrendsController.readTrends(req));
 });
 
-router.put('/', async function (req, res) {
-    res.send(await googleTrendsController.writeTrends());
+router.put('/:date', async function (req, res) {
+    res.send(await googleTrendsController.writeTrends(req));
 });
 
 router.put('/email', jsonParser, async function (req, res) {
