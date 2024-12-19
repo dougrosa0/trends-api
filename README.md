@@ -10,7 +10,7 @@
 ## Installation
 
 1. Clone the repository: 
-git clone https://github.com/yourusername/trends-api.git
+git clone https://github.com/dougrosa0/trends-api.git
 
 2. Install dependencies:
 npm install
