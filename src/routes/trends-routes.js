@@ -5,6 +5,10 @@ const googleTrendsController = require('../controllers/google-trends');
 
 var jsonParser = bodyParser.json()
 
+router.delete('/:date', async function (req, res) {
+    res.send(await googleTrendsController.deleteTrends(req));
+});
+
 router.get('/:date', async function (req, res) {
     res.send(await googleTrendsController.readTrends(req));
 });

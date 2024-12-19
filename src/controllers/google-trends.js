@@ -4,13 +4,57 @@ const dotenv = require('dotenv');
 dotenv.config({ path: '../.env' });
 
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
-const { DynamoDBDocumentClient, QueryCommand, PutCommand } = require("@aws-sdk/lib-dynamodb");
+const { DynamoDBDocumentClient, QueryCommand, PutCommand, DeleteCommand } = require("@aws-sdk/lib-dynamodb");
 const { SESClient, SendEmailCommand } = require("@aws-sdk/client-ses");
 const googleTrends = require('google-trends-api');
 
 const client = new DynamoDBClient({ region: AWS_REGION, credentials: { accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY } });
 const docClient = DynamoDBDocumentClient.from(client);
 const sesClient = new SESClient({ region: AWS_REGION, credentials: { accessKeyId: process.env.AWS_ACCESS_KEY_ID, secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY } });
+
+exports.deleteTrends = async function(req) {
+  const searchDate = req.params.date;
+  console.log("Deleting trends for " + searchDate);
+
+  const params = {
+    TableName: TABLE_NAME,
+    KeyConditionExpression: "#sd = :searchDate",
+    ExpressionAttributeNames: {
+      "#sd": "searchDate"
+    },
+    ExpressionAttributeValues: {
+      ":searchDate": searchDate
+    }
+  };
+
+  try {
+    const result = await docClient.send(new QueryCommand(params));
+    
+    const deletePromises = result.Items.map(item => {
+      const deleteParams = {
+        TableName: TABLE_NAME,
+        Key: {
+          "searchDate": searchDate,
+          "queryText": item.queryText
+        }
+      };
+      return docClient.send(new DeleteCommand(deleteParams));
+    });
+
+    await Promise.all(deletePromises);
+    
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ message: `Deleted ${result.Items.length} trends for ${searchDate}` })
+    };
+  } catch (err) {
+    console.error("Unable to delete items. Error:", JSON.stringify(err, null, 2));
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ message: "Error deleting trends" })
+    };
+  }
+};
 
 exports.emailTrends = async function(req) {
   var searchDate = req.body.date;
@@ -45,38 +89,6 @@ exports.emailTrends = async function(req) {
     console.error("Unable to query. Error:", JSON.stringify(err, null, 2));
   }
 };
-
-async function sendEmail(email,content) {
-  const params = {
-    Destination: {
-      ToAddresses: [email]
-    },
-    Message: {
-      Body: {
-        Html: {
-          Charset: "UTF-8",
-          Data: content
-          },
-          Text: {
-          Charset: "UTF-8",
-          Data: content
-        }
-      },
-      Subject: {
-        Charset: 'UTF-8',
-        Data: 'Google Trends'
-      }
-    },
-    Source: 'dougrosa0@gmail.com'
-  };
-
-  try {
-    const result = await sesClient.send(new SendEmailCommand(params));
-    console.log("Email sent successfully. MessageId: " + result.MessageId);
-  } catch (err) {
-    console.error(err, err.stack);
-  }
-}
 
 exports.readTrends = async function(req) {
   var searchDate = req.params.date;
@@ -124,7 +136,7 @@ exports.writeTrends = async function(req) {
     for (let i = 0; i < days.length; i++) {
       const day = days[i];
       const trendingSearches = day.trendingSearches;
-      const searchDate = day.date;
+      const searchDate = reqDate;
       console.log("Writing trends for " + searchDate);
 
       for (let j = 0; j < trendingSearches.length; j++) {
@@ -163,3 +175,36 @@ async function saveItem(queryString, searchDate, trafficAmount, dayRank) {
   };
   return docClient.send(new PutCommand(params));
 }
+
+async function sendEmail(email,content) {
+  const params = {
+    Destination: {
+      ToAddresses: [email]
+    },
+    Message: {
+      Body: {
+        Html: {
+          Charset: "UTF-8",
+          Data: content
+          },
+          Text: {
+          Charset: "UTF-8",
+          Data: content
+        }
+      },
+      Subject: {
+        Charset: 'UTF-8',
+        Data: 'Google Trends'
+      }
+    },
+    Source: 'dougrosa0@gmail.com'
+  };
+
+  try {
+    const result = await sesClient.send(new SendEmailCommand(params));
+    console.log("Email sent successfully. MessageId: " + result.MessageId);
+  } catch (err) {
+    console.error(err, err.stack);
+  }
+}
+
