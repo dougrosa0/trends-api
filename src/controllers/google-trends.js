@@ -120,7 +120,6 @@ exports.readTrends = async function(req) {
 
 exports.writeTrends = async function(req) {
   const reqDate = req.params.date;
-  console.log(reqDate);
 
   try {
     const results = await googleTrends.dailyTrends(
@@ -129,25 +128,26 @@ exports.writeTrends = async function(req) {
         geo: 'US'
       }
     );
-    console.log(results);
     const dailyGoogleTrends = JSON.parse(results);
     const days = dailyGoogleTrends.default.trendingSearchesDays;
+
+    console.log("Writing trends for requested date " + reqDate);
 
     for (let i = 0; i < days.length; i++) {
       const day = days[i];
       const trendingSearches = day.trendingSearches;
-      const searchDate = reqDate;
-      console.log("Writing trends for " + searchDate);
+      const formattedDate = day.date.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
 
       for (let j = 0; j < trendingSearches.length; j++) {
         const search = trendingSearches[j];
         const rank = j+1;
         const query = search.title.query;
         const trafficAmount = search.formattedTraffic;
-        await saveItem(query, searchDate, trafficAmount, rank);
+        await saveItem(query, formattedDate, trafficAmount, rank);
       }
+
+      console.log("Trends saved successfully for " + formattedDate);
     }
-    console.log("Trends saved successfully");
     return {
       statusCode: 200,
       body: JSON.stringify({ message: "Trends saved" })
